@@ -1,0 +1,52 @@
+---
+title: "Untitled"
+author: "Yiping Yin"
+date: "2019/11/1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+Zero_Safety <- read.csv("Vision_Zero_Safety_no_blanks.csv")
+library(tidyverse)
+```
+
+
+
+```{r}
+indicator<-duplicated(Zero_Safety$REQUESTTYPE)
+#The number of times each problem occurs and prop
+Times_ZS<-table(Zero_Safety$REQUESTTYPE[indicator])+1
+
+Times_ZS <- as.data.frame(Times_ZS)
+```
+
+
+```{r}
+bar_ZS<-ggplot(Times_ZS)+
+  geom_bar(mapping = aes(Var1,Freq),stat="identity")+
+  coord_flip()
+bar_ZS
+```
+
+```{r}
+
+#Idea: separate car problems and pedestrian problems, make more than two pictures, and add transparency. Dark areas indicate serious problems.If you do it without categories, there's too much data and transparency doesn't work very well.
+#↓ example,But they haven't been grouped yet.
+ggplot(Zero_Safety)+
+  geom_point(mapping = aes(x=X,y=Y,color=REQUESTTYPE,size=8,alpha=0.1))
+```
+
+```{r}
+#This is another way of drawing. I also think it can be classified into different types.
+library(ggmap)
+ggplot(Zero_Safety,aes(X,Y))+
+  coord_equal()+
+  stat_density2d(aes(fill=..level..),alpha=.5,
+                 geom ="polygon"  ,data = Zero_Safety)+
+  scale_fill_viridis_c()+
+  theme(legend.position = "none")
+```
