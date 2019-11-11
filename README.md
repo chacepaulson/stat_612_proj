@@ -11,7 +11,45 @@ Base vision zero data:
 https://opendata.dc.gov/datasets/vision-zero-safety
 
 Moving violations (broken out by month and year): 
-https://opendata.dc.gov/datasets/moving-violations-issued-in-june-2019
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2010
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2011
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2012
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2013
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2014
+https://opendata.dc.gov/datasets/moving-violations-summary-for-2015
+https://opendata.dc.gov/datasets/moving-violations-issued-in-january-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-february-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-march-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-april-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-may-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-june-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-july-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-august-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-september-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-october-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-november-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-december-2016
+https://opendata.dc.gov/datasets/moving-violations-issued-in-january-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-february-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-march-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-april-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-may-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-june-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-july-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-august-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-september-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-october-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-november-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-december-2017
+https://opendata.dc.gov/datasets/moving-violations-issued-in-january-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-february-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-march-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-april-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-may-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-june-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-july-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-august-2018
+https://opendata.dc.gov/datasets/moving-violations-issued-in-september-2018
 
 Crash data (and companion data set): 
 https://opendata.dc.gov/datasets/crashes-in-dc
