@@ -59,7 +59,14 @@ Parking violations (broken out by year):
 https://opendata.dc.gov/datasets/parking-violations-issued-in-december-2018
 
 Traffic volume (broken out by year): 
+https://opendata.dc.gov/datasets/2010-traffic-volume
+https://opendata.dc.gov/datasets/2011-traffic-volume
+https://opendata.dc.gov/datasets/2012-traffic-volume
+https://opendata.dc.gov/datasets/2013-traffic-volume
+https://opendata.dc.gov/datasets/2014-traffic-volume
+https://opendata.dc.gov/datasets/2015-traffic-volume
 https://opendata.dc.gov/datasets/2016-traffic-volume
+https://opendata.dc.gov/datasets/2017-traffic-volume
 
 Data that could be mapped but likely not analyzed beyond that: 
 
