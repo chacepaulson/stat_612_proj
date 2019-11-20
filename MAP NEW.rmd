@@ -1,0 +1,115 @@
+---
+title: "Untitled"
+author: "Yiping Yin"
+date: "2019/11/1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+Zero_Safety <- read.csv("Vision_Zero_Safety_no_blanks.csv")
+library(tidyverse)
+```
+
+```{r}
+indicator<-duplicated(Zero_Safety$REQUESTTYPE)
+#The number of times each problem occurs and prop
+Times_ZS<-table(Zero_Safety$REQUESTTYPE[indicator])+1
+
+Times_ZS <- as.data.frame(Times_ZS)
+```
+
+
+```{r}
+bar_ZS<-ggplot(Times_ZS)+
+  geom_bar(mapping = aes(Var1,Freq),stat="identity")+
+  coord_flip()
+bar_ZS
+```
+
+```{r}
+#This is another way of drawing. I also think it can be classified into different types.
+library(ggmap)
+ggplot(Zero_Safety,aes(X,Y))+
+  coord_equal()+
+  stat_density2d(aes(fill=..level..),alpha=.5,
+                 geom ="polygon"  ,data = Zero_Safety)+
+  scale_fill_viridis_c()+
+  theme(legend.position = "none")
+```
+
+```{r}
+Zero_Safety_car<-Zero_Safety%>%
+  filter(REQUESTTYPE==c('Stop sign running','Speeding',
+'Red light running',
+'Failure to stop for pedestrians',
+'Double parking',
+'Other Driving Issue'))
+ggplot(Zero_Safety_car,aes(X,Y))+
+  coord_equal()+
+  stat_density2d(aes(fill=..level..),alpha=.5,
+                 geom ="polygon"  ,data = Zero_Safety_car)+
+  scale_fill_viridis_c()+
+  theme(legend.position = "none")
+```
+
+```{r}
+Zero_Safety_bike<-Zero_Safety%>%
+  filter(REQUESTTYPE==c('Cyclist behavior',
+'Blocking the bikebox',
+'Other Biking Issue'
+))
+ggplot(Zero_Safety_bike,aes(X,Y))+
+  coord_equal()+
+  stat_density2d(aes(fill=..level..),alpha=.5,
+                 geom ="polygon"  ,data = Zero_Safety_bike)+
+  scale_fill_viridis_c()+
+  theme(legend.position = "none")
+
+```
+
+```{r}
+Zero_Safety_walk<-Zero_Safety%>%
+  filter(REQUESTTYPE==c('Not enough time to cross',
+'Long wait to cross',
+'Long distance to cross',
+'Jaywalking',
+'Other Walking Issue'))
+ggplot(Zero_Safety_walk,aes(X,Y))+
+  coord_equal()+
+  stat_density2d(aes(fill=..level..),alpha=.5,
+                 geom ="polygon"  ,data = Zero_Safety_walk)+
+  scale_fill_viridis_c()+
+  theme(legend.position = "none")
+```
+
+
+```{r}
+Times_byym<-Zero_Safety%>%
+  separate(REQUESTDATE,into = c("Date","Time"),sep = 10)%>%
+  separate(Date,into = c("year","month","day"),sep = "-")%>%
+  select(REQUESTTYPE,year)
+Times_table1<-Times_byym%>%count(REQUESTTYPE,by=year)
+Times_table2<-Times_byym%>%count(REQUESTTYPE,by=year)%>%
+  spread(key=by,value=n)
+Times_table2
+Times_table2[is.na(Times_table2)]<-0
+
+Times_table4<-Times_table2%>%
+  gather("2015","2016","2017","2018","2019",key="year",value="n")
+
+ggplot(Times_table4,aes(year,n,color=REQUESTTYPE),stat ="identity")+
+  geom_point()+
+  geom_line(aes(group=REQUESTTYPE))
+
+Times_table3<-Times_table2%>%
+  select("REQUESTTYPE","2017","2018","2019")%>%
+  gather("2017","2018","2019",key="year",value="n")
+Times_table3
+ggplot(Times_table3,aes(year,n,color=REQUESTTYPE),stat ="identity")+
+  geom_point()+
+  geom_line(aes(group=REQUESTTYPE))
+```
