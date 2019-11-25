@@ -102,3 +102,4 @@ write.csv(crash_full1, file = "crash_full1")
 write.csv(crash_full2, file = "crash_full2")
 
 
+
