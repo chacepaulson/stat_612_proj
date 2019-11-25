@@ -3,6 +3,7 @@ library(readr)
 library(tidyverse)
 library(Stack)
 library(svMisc)
+library(compiler)
 
 pv2010_1 <- read_csv("~/Downloads/stat_612_proj/raw_data/Parking_Violations_Summary_for_2010__Weeks_1_to_26.csv")
 pv2010_2 <- read_csv("~/Downloads/stat_612_proj/raw_data/Parking_Violations_Summary_for_2010__Weeks_27_to_52.csv")
@@ -260,53 +261,94 @@ cols.remove <- c("ISSUING_AGENCY_CODE", "VIOLATION_CODE", "PLATE_STATE",
 
 pv2 <- pv2[, ! names(pv2) %in% cols.remove, drop = F]
 
+# drop unnecessary columns
+cols.remove <- c("TICKET_NUMBER", "ISSUE_TIME", "ISSUING_AGENCY_CODE", "PLATE_STATE", "VEHICLE_TYPE", "MULTI_OWNER_NUMBER", "DISPOSITION_CODE", "DISPOSITION_TYPE", "DISPOSITION_DATE", "TOTAL_PAID", "PENALTY_1", "PENALTY_2", "PENALTY_3", "PENALTY_4", "PENALTY_5", "XCOORD", "YCOORD", "MAR_ID", "GIS_LAST_MOD_DTTM" )
 
+pv2 <- pv2[, ! names(pv2) %in% cols.remove, drop = F]
+
+# add formatted violation_type to pv2
 unique(pv$violation_type)
-
-str_subset(pv2$VIOLATION_PROC_DESC, "RESIDENT")
-str_subset(pv2$VIOLATION_PROC_DESC, "RESTRICT")
-
 pv2$violation_type <- NA
-pv2$time <- NA
 
-for(i in 1:length(pv2$year)){
-  if(str_detect(pv2$VIOLATION_PROC_DESC[i], "RUSH") == TRUE &
+output <- character(nrow(pv2))
+
+for (i in 1:nrow(pv2)) {
+  if (str_detect(pv2$VIOLATION_PROC_DESC[i], "RUSH") == TRUE &
+      (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+    output[i] <- "RUSHHOURVIOLATIONS"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "BIKE") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "IMPEDBIKEPED"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "ZONE") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "RESTRICTEDZONES"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "METER") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "METERS"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "RESIDENT") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "RPP"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "COMM") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "COMMVEHICLE"
+    } else if (str_detect(pv2$VIOLATION_PROC_DESC[i], "PARK") == TRUE &
+               (!is.na(pv2$VIOLATION_PROC_DESC[i]))) {
+      output[i] <- "UNSAFEPARKING"
+    } else {
+      output[i] <- "OTHER"
+    }
+}
+
+pv2$violation_type <- output
+
+# add formatted time to pv2
+
+output2 <- character(nrow(pv2))
+
+for(i in 1:nrow(pv2)){
+  if(str_detect(pv2$VIOLATION_PROC_DESC[i], " AM ") == TRUE &
      (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "RUSHHOURVIOLATIONS"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "BIKE") == TRUE &
+    output2[i] <- "AM"
+  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], " PM ") == TRUE &
            (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "IMPEDBIKEPED"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "ZONE") == TRUE &
-            (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "RESTRICTEDZONES"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "METER") == TRUE &
-            (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "METERS"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "RESIDENT") == TRUE &
-            (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "RPP"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "COMM") == TRUE &
-            (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "COMMVEHICLE"
-  }else if(str_detect(pv2$VIOLATION_PROC_DESC[i], "PARK") == TRUE &
-           (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
-    pv2$violation_type[i] <- "UNSAFEPARKING"
-  }else{
-    pv2$violation_type[i] <- "OTHER"
+    output2[i] <- "PM"
   }
 }
 
-?else
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "RUSH"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "BIKE"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "ZONE"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "METER"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "RESIDENT"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "PARK"), na.rm = TRUE)
-sum(str_detect(pv2$VIOLATION_PROC_DESC, "COMM"), na.rm = TRUE)
+pv2$time <- output2
 
+# add formatted rush to pv2
 
+output3 <- character(nrow(pv2))
 
+for(i in 1:nrow(pv2)){
+  if(str_detect(pv2$VIOLATION_PROC_DESC[i], "RUSH") == TRUE &
+     (!is.na(pv2$VIOLATION_PROC_DESC[i]))){
+    output3[i] <- "RUSH"
+  }else {
+    output3[i] <- "NORUSH"
+  }
+}
+
+pv2$rush <- output3
+
+# add value column 
+pv2$value <- 1
+
+# rename columns in pv2 
+colnames(pv2)
+
+pv2 <- pv2 %>% 
+  rename(object_id = OBJECTID,
+         issue_date = ISSUE_DATE,
+         iss_agency_name = ISSUING_AGENCY_NAME, 
+         iss_agency_short = ISSUING_AGENCY_SHORT, 
+         violation_desc = VIOLATION_PROC_DESC, 
+         location = LOCATION, 
+         fine_amount = FINE_AMOUNT, 
+         lat = LATITUDE, 
+         lon = LONGITUDE)
+  
 # find which colnames are different 
 x <- colnames(pv)
 y <- colnames(pv2)
@@ -314,11 +356,45 @@ y <- colnames(pv2)
 x[!x %in% y]
 y[!y %in% x]
 
-test <- subset(pv, violation_type = "RPP")
+# combine street columns in location in pv 
+pv <- pv %>% 
+  unite("location", c(street_seg, registered_name, street_type, quadrant),
+        sep = " ")
 
-# drop unnecessary columns
-cols.remove <- c("TICKET_NUMBER", "ISSUE_TIME", "ISSUING_AGENCY_CODE", "PLATE_STATE", "VEHICLE_TYPE", "MULTI_OWNER_NUMBER", "DISPOSITION_CODE", "DISPOSITION_TYPE", "DISPOSITION_DATE", "TOTAL_PAID", "PENALTY_1", "PENALTY_2", "PENALTY_3", "PENALTY_4", "PENALTY_5", "XCOORD", "YCOORD", "MAR_ID", "GIS_LAST_MOD_DTTM" )
+# merge pv and pv2 data frames
+x[x %in% y]
+pv_full <- Stack(pv, pv2)
 
-pv2 <- pv2[, ! names(pv2) %in% cols.remove, drop = F]
+nrow(pv) + nrow(pv2)
+nrow(pv_full)
+
+# break down pv_full into smaller files for uploading 
+pv_full1 <- pv_full[1:1144730, ]
+pv_full2 <- pv_full[1144731:2289460, ]
+pv_full3 <- pv_full[2289461:3000000, ]
+pv_full4 <- pv_full[3000001:3500000, ]
+pv_full5 <- pv_full[3500001:4000000, ]
+pv_full6 <- pv_full[4000001:4500000, ]
+pv_full7 <- pv_full[4500001:5000000, ]
+pv_full8 <- pv_full[5000001:5500000, ]
+pv_full9 <- pv_full[5500001:6000000, ]
+pv_full10 <- pv_full[6000001:6500000, ]
+pv_full11 <- pv_full[6500001:6868383, ]
+
+# export data 
+write_csv(pv_full1, "pv1.csv")
+write_csv(pv_full2, "pv2.csv")
+write_csv(pv_full3, "pv3.csv")
+write_csv(pv_full4, "pv4.csv")
+write_csv(pv_full5, "pv5.csv")
+write_csv(pv_full6, "pv6.csv")
+write_csv(pv_full7, "pv7.csv")
+write_csv(pv_full8, "pv8.csv")
+write_csv(pv_full9, "pv9.csv")
+write_csv(pv_full10, "pv10.csv")
+write_csv(pv_full11, "pv11.csv")
+
+
+
 
 
