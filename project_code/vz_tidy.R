@@ -1,4 +1,5 @@
 # load packages and data
+library(readr)
 library(tidyverse)
 library(stringr)
 
