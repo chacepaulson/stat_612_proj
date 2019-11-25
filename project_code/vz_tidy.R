@@ -26,4 +26,4 @@ vz$year <- substr(vz$request_date, 1, 4)
 vz$month <- substr(vz$request_date, 6, 7)
 
 # export data
-write.csv(vz, file = "vz")
+write.csv(vz, file = "vz.csv")

@@ -63,7 +63,7 @@ crash$year <- substr(crash$report_date, 1, 4)
 crash$month <- substr(crash$report_date, 6, 7)
 
 # export data
-write.csv(crash, file = "crash")
+write.csv(crash, file = "crash.csv")
 
 # drop unnecessary columns
 colnames(crash_detail)
@@ -97,9 +97,7 @@ crash_full1 <- crash_full[1:236815, ]
 crash_full2 <- crash_full[236816:473631, ]
 
 # export crash_detail and crash_full
-write.csv(crash_detail, file = "crash_detail")
-write.csv(crash_full1, file = "crash_full1")
-write.csv(crash_full2, file = "crash_full2")
-
-
+write.csv(crash_detail, file = "crash_detail.csv")
+write.csv(crash_full1, file = "crash_full1.csv")
+write.csv(crash_full2, file = "crash_full2.csv")
 
