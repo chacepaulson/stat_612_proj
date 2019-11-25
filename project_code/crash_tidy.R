@@ -2,10 +2,10 @@
 library(readr)
 library(tidyverse)
 crash <- read_csv("~/Downloads/stat_612_proj/raw_data/Crashes_in_DC.csv")
+crash_detail <- read_csv("~/Downloads/stat_612_proj/raw_data/Crash_Details_Table.csv")
 
-# rename columns
+# drop unnecessary columns
 colnames(crash)
-
 cols.remove <- c("CCN", "MEASURE", "OFFSET", "FROMDATE", "TODATE", 
                  "MARID", "MAR_ADDRESS", "MAR_SCORE", "NEARESTINTROUTEID",
                  "OFFINTERSECTION", "INTAPPROACHDIRECTION", 
@@ -14,6 +14,7 @@ cols.remove <- c("CCN", "MEASURE", "OFFSET", "FROMDATE", "TODATE",
 
 crash <- crash[, ! names(crash) %in% cols.remove, drop = F]
 
+# rename columns
 crash <- crash %>% 
   rename(x = X, 
          y = Y, 
@@ -62,4 +63,42 @@ crash$year <- substr(crash$report_date, 1, 4)
 crash$month <- substr(crash$report_date, 6, 7)
 
 # export data
-write.csv(vz, file = "vz")
+write.csv(crash, file = "crash")
+
+# drop unnecessary columns
+colnames(crash_detail)
+cols.remove <- c("CCN")
+
+crash_detail <- 
+  crash_detail[, ! names(crash_detail) %in% cols.remove, drop = F]
+
+# rename columns
+crash_detail <- crash_detail %>% 
+  rename(object_id = OBJECTID,
+         crime_id = CRIMEID, 
+         person_id = PERSONID, 
+         person_type = PERSONTYPE,
+         age = AGE,
+         fatal = FATAL, 
+         maj_inj = MAJORINJURY,
+         min_inj = MINORINJURY,
+         vehicle_id = VEHICLEID,
+         in_vehicle_type = INVEHICLETYPE,
+         ticket_issued = TICKETISSUED,
+         license_plate_state = LICENSEPLATESTATE, 
+         impaired = IMPAIRED,
+         speeding = SPEEDING)
+
+# merge crash and crash_detail
+crash_full <- merge(crash, crash_detail, by = "crime_id")
+
+# cut crash_full into two sets for export
+crash_full1 <- crash_full[1:236815, ]
+crash_full2 <- crash_full[236816:473631, ]
+
+# export crash_detail and crash_full
+write.csv(crash_detail, file = "crash_detail")
+write.csv(crash_full1, file = "crash_full1")
+write.csv(crash_full2, file = "crash_full2")
+
+
