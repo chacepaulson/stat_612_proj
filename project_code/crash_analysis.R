@@ -168,12 +168,11 @@ crash14 <- subset(crash, year == 2014)
 qmplot(lon, lat, data = crash18, color = I('blue'), size = I(0.3), darken = 0.2, alpha = I(0.1))
 qmplot(lon, lat, data = crash14, color = I('blue'), size = I(0.3), darken = 0.2, alpha = I(0.1))
 
-
 fatal18 <- subset(crash18, fatal == "Y")
 fatal14 <- subset(crash14, fatal == "Y")
 
-qmplot(lon, lat, data = fatal18, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
-qmplot(lon, lat, data = fatal14, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
+qmplot(lon, lat, data = fatal18, color = I('blue'), size = I(3), darken = 0.2, alpha = I(1))
+qmplot(lon, lat, data = fatal14, color = I('blue'), size = I(3), darken = 0.2, alpha = I(1))
 
 maj_inj18 <- subset(crash18, maj_inj == "Y")
 maj_inj14 <- subset(crash14, maj_inj == "Y")
