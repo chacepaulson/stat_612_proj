@@ -144,19 +144,50 @@ for(i in 1:nrow(crash_multi)){
   }
 }
 
-lmout1 <- lm(crash_count ~ year, data = crash_year)
+lmout1 <- lm(crash_count ~ year_dum, data = crash_year)
 
 tidy(lmout1, conf.int = TRUE)
 
-lmout2 <- lm(crash_count ~ year + fatal + maj_inj + min_inj + ticket_issued + impaired + speeding, data = crash_multi)
+lmout2 <- lm(crash_count ~ year_dum + fatal + maj_inj + min_inj + ticket_issued + impaired + speeding, data = crash_multi)
 
 tidy(lmout2, conf.int = TRUE)
 
-lmout3 <- lm(crash_count ~ year_dum, data = crash_year)
+
+fatal_count <- fatal %>% 
+  count(year, name = "fatal_crash_count")
+
+fatal_count$year_dum <- NA
+
+for(i in 1:nrow(fatal_count)){
+  if(fatal_count$year[i] > 2015){
+    fatal_count$year_dum[i] <- 1
+  }else if(fatal_count$year[i] == 2015){
+    fatal_count$year_dum[i] <- 1
+  }else if(fatal_count$year[i] < 2015){
+    fatal_count$year_dum[i] <- 0
+  }
+}
+
+lmout3 <- lm(fatal_crash_count ~ year_dum, data = fatal_count)
 
 tidy(lmout3, conf.int = TRUE)
 
-lmout4 <- lm(crash_count ~ year_dum + fatal + maj_inj + min_inj + ticket_issued + impaired + speeding, data = crash_multi)
+maj_inj_count <- maj_inj %>% 
+  count(year, name = "maj_inj_crash_count")
+
+maj_inj_count$year_dum <- NA
+
+for(i in 1:nrow(maj_inj_count)){
+  if(maj_inj_count$year[i] > 2015){
+    maj_inj_count$year_dum[i] <- 1
+  }else if(maj_inj_count$year[i] == 2015){
+    maj_inj_count$year_dum[i] <- 1
+  }else if(maj_inj_count$year[i] < 2015){
+    maj_inj_count$year_dum[i] <- 0
+  }
+}
+
+lmout4 <- lm(maj_inj_crash_count ~ year_dum, data = maj_inj_count)
 
 tidy(lmout4, conf.int = TRUE)
 
