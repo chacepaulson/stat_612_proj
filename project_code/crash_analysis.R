@@ -28,7 +28,9 @@ crash <- crash[, ! names(crash) %in% cols.remove, drop = F]
 crash <- subset(crash, year > 2009)
 crash <- subset(crash, year < 2020)
 
-# bar graph 
+
+# general bar graph -------------------------------------------------------
+ 
 crash$year_factor <- as.factor(crash$year)
 
 ggplot(data = crash, mapping = aes(x = year_factor, color = year_factor,
@@ -39,7 +41,9 @@ ggplot(data = crash, mapping = aes(x = year_factor, color = year_factor,
        y = "Count") + 
   theme(legend.position = "none")
 
-# fatal, major injury, minor injury, impaired, speeding bar graphs 
+
+# separated bar charts ----------------------------------------------------
+
 fatal <- subset(crash, fatal == "Y")
 
 p1 <- ggplot(data = fatal, 
@@ -176,4 +180,4 @@ qmplot(lon, lat, data = maj_inj16, color = I('blue'), size = I(0.7), darken = 0.
 maj_inj14 <- subset(crash14, maj_inj == "Y")
 qmplot(lon, lat, data = maj_inj14, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
 
-?qmplot
+
