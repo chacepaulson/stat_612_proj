@@ -1,0 +1,179 @@
+# import data and packages 
+library(tidyverse)
+library(readr)
+library(Stack)
+library(broom)
+library(gridExtra) 
+library(grid) 
+library(png) 
+library(downloader) 
+library(grDevices)
+library(ggmap)
+crash_full1 <- read_csv("~/Downloads/stat_612_proj/coded_data/crash_full1.csv")
+crash_full2 <- read_csv("~/Downloads/stat_612_proj/coded_data/crash_full2.csv")
+
+# stack data sets 
+crash <- Stack(crash_full1, crash_full2)
+
+# check column names 
+colnames(crash)
+
+cols.remove <- c("x", "y", "object_id.x", "route_id", "street_seg_id",
+                 "rdwy_seg_id", "xcor", "ycor", "event_id", "mpd_geo_y",
+                 "mpd_geo_y", "object_id.y", "vehicle_id")
+
+crash <- crash[, ! names(crash) %in% cols.remove, drop = F]
+
+# subset to relevant years 
+crash <- subset(crash, year > 2009)
+crash <- subset(crash, year < 2020)
+
+# bar graph 
+crash$year_factor <- as.factor(crash$year)
+
+ggplot(data = crash, mapping = aes(x = year_factor, color = year_factor,
+                                   fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Crashes by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none")
+
+# fatal, major injury, minor injury, impaired, speeding bar graphs 
+fatal <- subset(crash, fatal == "Y")
+
+p1 <- ggplot(data = fatal, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Fatal Crashes by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none") 
+
+maj_inj <- subset(crash, maj_inj == "Y")
+
+p2 <- ggplot(data = maj_inj, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Major Injuries in Crashes by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none") 
+
+min_inj <- subset(crash, min_inj == "Y")
+
+p3 <- ggplot(data = min_inj, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Minor Injuries in Crashes by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none") 
+
+ticket <- subset(crash, ticket_issued == "Y")
+
+p4 <- ggplot(data = ticket, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Tickets Issued for Crashes by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none") 
+
+impaired <- subset(crash, impaired == "Y")
+
+p5 <- ggplot(data = impaired, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Crashes with Impaired Drivers by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none")
+
+speeding <- subset(crash, speeding == "Y")
+
+p6 <- ggplot(data = speeding, 
+       mapping = aes(x = year_factor, color = year_factor,
+                     fill = year_factor)) +
+  geom_bar() + 
+  labs(title = "Crashes with Drivers who were Speeding by Year",
+       x = "Year", 
+       y = "Count") + 
+  theme(legend.position = "none")
+
+grid.arrange(p4, p1, p2, p3, p5, p6, ncol = 2)
+
+# linear regression -------------------------------------------------------
+
+crash_year <- crash %>% 
+  count(year, name = "crash_count")
+
+crash_multi <- crash %>% 
+  count(year, fatal, maj_inj, min_inj, ticket_issued, impaired, speeding,
+        name = "crash_count")
+
+crash_year$year_dum <- NA
+crash_multi$year_dum <- NA
+
+for(i in 1:nrow(crash_year)){
+  if(crash_year$year[i] > 2015){
+    crash_year$year_dum[i] <- 1
+  }else if(crash_year$year[i] == 2015){
+    crash_year$year_dum[i] <- 1
+  }else if(crash_year$year[i] < 2015){
+    crash_year$year_dum[i] <- 0
+  }
+}
+
+for(i in 1:nrow(crash_multi)){
+  if(crash_multi$year[i] > 2015){
+    crash_multi$year_dum[i] <- 1
+  }else if(crash_multi$year[i] == 2015){
+    crash_multi$year_dum[i] <- 1
+  }else if(crash_multi$year[i] < 2015){
+    crash_multi$year_dum[i] <- 0
+  }
+}
+
+lmout1 <- lm(crash_count ~ year, data = crash_year)
+
+tidy(lmout1, conf.int = TRUE)
+
+lmout2 <- lm(crash_count ~ year + fatal + maj_inj + min_inj + ticket_issued + impaired + speeding, data = crash_multi)
+
+tidy(lmout2, conf.int = TRUE)
+
+lmout3 <- lm(crash_count ~ year_dum, data = crash_year)
+
+tidy(lmout3, conf.int = TRUE)
+
+lmout4 <- lm(crash_count ~ year_dum + fatal + maj_inj + min_inj + ticket_issued + impaired + speeding, data = crash_multi)
+
+tidy(lmout4, conf.int = TRUE)
+
+# maps --------------------------------------------------------------------
+
+crash16 <- subset(crash, year == 2016)
+crash14 <- subset(crash, year == 2014)
+qmplot(lon, lat, data = crash16, color = I('blue'), size = I(0.3), darken = 0.2, alpha = I(0.1))
+qmplot(lon, lat, data = crash14, color = I('blue'), size = I(0.3), darken = 0.2, alpha = I(0.1))
+
+
+fatal16 <- subset(crash16, fatal == "Y")
+qmplot(lon, lat, data = fatal16, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
+
+fatal14 <- subset(crash14, fatal == "Y")
+qmplot(lon, lat, data = fatal14, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
+
+maj_inj16 <- subset(crash16, maj_inj == "Y")
+qmplot(lon, lat, data = maj_inj16, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
+
+maj_inj14 <- subset(crash14, maj_inj == "Y")
+qmplot(lon, lat, data = maj_inj14, color = I('blue'), size = I(0.7), darken = 0.2, alpha = I(1))
+
+?qmplot
