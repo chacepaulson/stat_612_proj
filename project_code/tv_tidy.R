@@ -176,6 +176,14 @@ join2 <- join2 %>%
 tv2016 <- join1
 tv2017 <- join2
 
+# match limits on the aadt 
+tv2010$aadt <- tv2010$aadt * 1000
+tv2011$aadt <- tv2011$aadt * 1000
+tv2012$aadt <- tv2012$aadt * 1000
+tv2013$aadt <- tv2013$aadt * 1000
+tv2014$aadt <- tv2014$aadt * 1000
+tv2015$aadt <- tv2015$aadt * 1000
+
 # stack finalized data 
 tv1 <- Stack(tv2010, tv2011)
 tv2 <- Stack(tv2012, tv2013)
