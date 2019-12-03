@@ -22,12 +22,13 @@ pv<-Stack(pv,pv8)
 pv<-Stack(pv,pv9)
 pv<-Stack(pv,pv10)
 pv<-Stack(pv,pv11)
+
 #----------------------------------------------------------------------
 View(pv)
 sum(is.na(pv$lat))
 sum(is.na(pv$rush))  #too much NA, dont use this colunm
 row(pv)
-unique(pv$year)
+unique(pv$violation_type)
 #----------------------------------------------------------------------------
 #year + time
 pv_1<-pv%>%
@@ -44,123 +45,7 @@ ggplot(pv_1,aes(year,n,color=time))+
   geom_point()+
   geom_line(aes(group=time)) #good picture!
 
-#-------------------------------------------------------------------
-#rush
-pv_rush<-pv%>%
-  select(year,rush)%>%
-  unite(RUSH,year,rush,sep="-")%>%
-  count(RUSH)%>%
-  separate(RUSH,into = c("year","rush"))%>%
-  filter(rush==c("NORUSH","RUSH"))
-pv_rush_2010<-pv_rush%>%
-  filter(year=="2010")
-pv_rush_2011<-pv_rush%>%
-  filter(year=="2011")
-pv_rush_2012<-pv_rush%>%
-  filter(year=="2012")
-pv_rush_2013<-pv_rush%>%
-  filter(year=="2013")
-pv_rush_2014<-pv_rush%>%
-  filter(year=="2014")
-pv_rush_2015<-pv_rush%>%
-  filter(year=="2015")
-ggplot(pv_rush,aes(rush,n,color=year))+
-  geom_point()+
-  geom_line(aes(group=year)) #dont use this picture
-#-------------------------------------------------------
-#5 pies(based on year) for rush percent
-pv_rush<-pv%>%
-  select(year,rush)%>%
-  unite(RUSH,year,rush,sep="-")%>%
-  count(RUSH)%>%
-  separate(RUSH,into = c("year","rush"))
 
-pv_rushpie_2010<-pv%>%
-  filter(year=="2010")%>%
-  select(year,rush)
-pv_rushpie_2011<-pv%>%
-  filter(year=="2011")%>%
-  select(year,rush)
-pv_rushpie_2012<-pv%>%
-  filter(year=="2012")%>%
-  select(year,rush)
-pv_rushpie_2013<-pv%>%
-  filter(year=="2013")%>%
-  select(year,rush)
-pv_rushpie_2014<-pv%>%
-  filter(year=="2014")%>%
-  select(year,rush)
-pv_rushpie_2015<-pv%>%
-  filter(year=="2015")%>%
-  select(year,rush)
-
-blank_theme <- theme_minimal()+
-  theme(
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),
-    panel.border = element_blank(),
-    panel.grid=element_blank(),
-    axis.ticks = element_blank(),
-    plot.title=element_text(size=14, face="bold")
-  )
-ggplot(pv_rushpie_2010, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-ggplot(pv_rushpie_2011, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-ggplot(pv_rushpie_2012, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-ggplot(pv_rushpie_2013, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-ggplot(pv_rushpie_2014, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-ggplot(pv_rushpie_2015, mapping=aes(x="rush",fill=rush))+
-  geom_bar(stat="count",width=0.5,position='stack',size=5)+
-  coord_polar("y", start=0)+
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-  blank_theme +
-  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
-            size=4, position=position_stack(vjust = 0.5))
-#-----------------------------------------------------------------------
-#week
-pv_week<-pv%>%
-  select(year,week_num)%>%
-  unite(WEEK,year,week_num,sep="-")%>%
-  count(WEEK)%>%
-  separate(WEEK,into = c("year","week_num"))
-pv_week$week_num<-as.numeric(pv_week$week_num)
-ggplot(pv_week,aes(week_num,n,color=year))+
-  geom_point()+
-  geom_line(aes(group=year)) #dont use this
-
-ggplot(pv_week,aes(week_num,n,color=year))+
-  geom_smooth(se = FALSE)
 #---------------------------------------------------------
 #violation type
 unique(pv$violation_type)
@@ -171,8 +56,94 @@ pv_type<-pv%>%
   count(TYPE)%>%
   separate(TYPE,into = c("year","type"))
 pv_type
+options(scipen = 200)
 ggplot(pv_type, mapping=aes(x=year,y=n,fill=type))+
   geom_bar(stat="identity",width=0.5,position='stack',size=5)+
   labs(x = '', y = 'violation type(%)') +
   theme(axis.text = element_text(size = 12), axis.title = element_text(size = 13)) +
   theme(legend.text = element_text(size = 11))
+
+pv_typeCOMMVEHICLE<-pv_type%>%
+  filter(type=="COMMVEHICLE")
+pv_typeIMPEDBIKEPED<-pv_type%>%
+  filter(type=="IMPEDBIKEPED")
+pv_typeMETERS<-pv_type%>%
+  filter(type=="METERS")
+pv_typeOTHER<-pv_type%>%
+  filter(type=="OTHER")
+pv_typeRESTRICTEDZONES<-pv_type%>%
+  filter(type=="RESTRICTEDZONES")
+pv_typeRPP<-pv_type%>%
+  filter(type=="RPP")
+pv_typeUNSAFEPARKING<-pv_type%>%
+  filter(type=="UNSAFEPARKING")
+pv_typeRUSHHOURVIOLATIONS<-pv_type%>%
+  filter(type=="RUSHHOURVIOLATIONS")
+ggplot(pv_typeCOMMVEHICLE, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="COMMVEHICLE",x = '', y = 'count') 
+ggplot(pv_typeIMPEDBIKEPED, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="IMPEDBIKEPED",x = '', y = 'count') 
+ggplot(pv_typeMETERS , mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="METERS",x = '', y = 'count') 
+ggplot(pv_typeOTHER, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="OTHER",x = '', y = 'count') 
+ggplot(pv_typeRESTRICTEDZONES, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="RESTRICTEDZONES",x = '', y = 'count') 
+ggplot(pv_typeRPP , mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="RPP",x = '', y = 'count') 
+ggplot(pv_typeRUSHHOURVIOLATIONS, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="RUSHHOURVIOLATIONS",x = '', y = 'count') 
+ggplot(pv_typeUNSAFEPARKING, mapping=aes(x=year,y=n,fill=year))+
+  geom_bar(stat="identity")+
+  labs(title="UNSAFEPARKING",x = '', y = 'count') 
+
+
+ggplot(pv_type, mapping=aes(x="type",fill=type))+
+  geom_bar(stat="count",width=0.5,position='stack',size=5)+
+  coord_polar("y", start=0)+
+  blank_theme+
+  geom_text(stat="count",aes(label = scales::percent((..count..)/sum(..count..))), 
+            size=4, position=position_stack(vjust = 0.5))
+View(pv)
+#------------------------------
+#Regression use
+pv_0<-pv%>%
+  select(year)%>%
+  count(year)
+pv_0
+options(scipen = 200)
+pv_00<-lm(pv_0)
+pv_00
+summary(pv_00)
+
+pv_0$year_dum <- NA
+
+
+for(i in 1:nrow(pv_0)){
+  
+  if(pv_0$year[i] > 2015){
+    
+    pv_0$year_dum[i] <- 1
+    
+  }else if(pv_0$year[i] == 2015){
+    
+    pv_0$year_dum[i] <- 1
+    
+  }else if(pv_0$year[i] < 2015){
+    
+    pv_0$year_dum[i] <- 0
+    
+  }
+}
+
+lmout1 <- lm(n ~ year_dum, data = pv_0)
+
+
+View(pv11)
